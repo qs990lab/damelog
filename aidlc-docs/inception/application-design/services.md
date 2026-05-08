@@ -14,10 +14,10 @@
 C1(フロントエンド) → C2(エージェント)
     C2 → C10(Guardrails): 入力フィルタリング
     C2 → C2: ダメ行動分析（属性・深刻度判定）
-    C2 → C5(モンスター生成ツール): 新規カテゴリ判定
+    C2 → C11(新規カテゴリ判定ツール): 新規カテゴリ判定
     
     [新規カテゴリの場合]
-        C2 → C5: モンスター生成
+        C2 → C14(モンスター生成ツール): モンスター生成
         C2 → C1: 孵化演出イベント + 新モンスターデータ
     
     [既存カテゴリの場合]
@@ -57,7 +57,7 @@ C1(フロントエンド) → C2(エージェント)
 
 ```
 C1(フロントエンド) → C2(エージェント)
-    C2 → AgentCore Memory: 過去の入力パターン取得
+    C2 → C12(メモリ): 過去の入力パターン取得
     C2 → C2: 選択肢ボタン生成
     C2 → C1: ボタンラベル一覧
 ```
@@ -81,10 +81,11 @@ C1 → 以降の全リクエストにトークン付与
 | 通信経路 | プロトコル |
 |---------|-----------|
 | C1 → C2 | HTTP streaming（InvokeAgentRuntime API） |
-| C2 → C3/C4/C5/C6 | AgentCore Gateway（MCP / Streamable HTTP） |
-| C2 → Memory | AgentCore Memory API |
-| C2 → Bedrock LLM | Bedrock InvokeModel API |
+| C2 → C3/C4/C6/C11/C14 | AgentCore Gateway（MCP / Streamable HTTP） |
+| C2 → C12 | AgentCore Memory API |
+| C2 → C13 | Bedrock InvokeModel API |
 | C2 → C10 | Bedrock Guardrails API |
 | C1 → C9 | Cognito SDK |
-| C3/C4/C5/C6 → C7 | DynamoDB SDK |
+| C3/C4/C6/C11/C14 → C7 | DynamoDB SDK |
+| C5 → C7, C8 | DynamoDB SDK, S3 SDK（Python CLI直接実行） |
 | C1 → C8 | S3 URL 直接参照 |

@@ -42,19 +42,18 @@
 | メソッド | 入力 | 出力 | 概要 |
 |---------|------|------|------|
 | `check_skill_unlock()` | monster_id, action_history | {can_unlock, condition_met} | 技解放条件チェック |
-| `generate_skill()` | monster_id, condition_type | {skill_name, effect, description} | 新技を生成（LLM利用） |
+| `generate_skill()` | monster_id, condition_type | {skill_name, effect, description} | 新技を生成（C13利用） |
 | `apply_skill()` | monster_id, skill | updated_monster | 技をモンスターに追加 |
 
 ---
 
-## C5: モンスター生成ツール
+## C5: モンスター画像生成ツール
 
 | メソッド | 入力 | 出力 | 概要 |
 |---------|------|------|------|
-| `is_new_category()` | user_id, category | bool | 新規カテゴリ判定 |
-| `create_monster()` | user_id, category, attributes, severity | new_monster | 新モンスター生成 |
-| `determine_rarity()` | attributes, severity, conditions | rarity (N/R/SR/UR) | レア度判定 |
-| `get_image_url()` | attributes, evolution_stage, rarity | image_url | 画像URLマッピング取得 |
+| `generate_image()` | attributes, evolution_stage, rarity, prompt_template | image_data | モンスター画像を生成 |
+| `upload_to_s3()` | image_data, key | s3_url | S3に画像をアップロード |
+| `register_metadata()` | attributes, evolution_stage, rarity, s3_url | - | DynamoDBに画像メタデータ登録 |
 
 ---
 
@@ -66,3 +65,33 @@
 | `get_completion_rate()` | user_id, filter | {collected, total, rate} | コンプリート率計算 |
 | `get_hints()` | user_id | [hints] | 未獲得モンスターのヒント取得 |
 | `get_evolution_tree()` | monster_master_id | tree_data | 進化ツリー取得 |
+
+---
+
+## C7〜C10: インフラ/マネージドサービス
+
+メソッド定義なし（DynamoDB, S3, Cognito, Bedrock Guardrails）
+
+---
+
+## C11: 新規カテゴリ判定ツール
+
+| メソッド | 入力 | 出力 | 概要 |
+|---------|------|------|------|
+| `is_new_category()` | user_id, category | bool | 新規カテゴリ判定 |
+
+---
+
+## C12〜C13: インフラ/マネージドサービス
+
+メソッド定義なし（AgentCore Memory, Bedrock Claude）
+
+---
+
+## C14: モンスター生成ツール
+
+| メソッド | 入力 | 出力 | 概要 |
+|---------|------|------|------|
+| `create_monster()` | user_id, category, attributes, severity | new_monster | 新モンスター生成 |
+| `determine_rarity()` | attributes, severity, conditions | rarity (N/R/SR/UR) | レア度判定 |
+| `select_image()` | attributes, evolution_stage, rarity | image_url | 既存画像から選択 |
