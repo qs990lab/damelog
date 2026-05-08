@@ -97,13 +97,17 @@
 
 **責務**:
 - 構造化データの永続化（トランザクション系・マスタ系）
+- オンデマンドキャパシティモード（スケール自動調整）
 
-**テーブル設計（概要）**:
-- Users テーブル（ユーザープロフィール、設定）
-- Monsters テーブル（ユーザーの手持ちモンスター、ステータス、技、進化履歴）
-- DameActions テーブル（ダメ行動記録履歴）
-- MonsterMaster テーブル（全モンスター定義・進化ツリー）
-- ImageMapping テーブル（画像メタデータ：属性×進化段階×レア度→S3 URL）
+**テーブル設計**:
+
+| テーブル | PK | SK | GSI | 主なアクセスパターン |
+|---------|----|----|-----|-------------------|
+| Users | `USER#<user_id>` | `PROFILE` | - | ユーザー情報取得 |
+| Monsters | `USER#<user_id>` | `MONSTER#<monster_id>` | GSI1: `CATEGORY#<category>` | ユーザーの手持ち一覧、カテゴリ別検索 |
+| DameActions | `USER#<user_id>` | `ACTION#<timestamp>` | - | ユーザーの記録履歴（時系列） |
+| MonsterMaster | `MASTER#<master_id>` | `STAGE#<evolution_stage>` | GSI1: `ATTR#<attribute>` | 進化ツリー取得、属性別検索 |
+| ImageMapping | `ATTR#<attribute>#STAGE#<stage>` | `RARITY#<rarity>` | - | 属性×進化段階×レア度→画像URL |
 
 ---
 

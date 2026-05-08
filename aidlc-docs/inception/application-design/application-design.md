@@ -6,6 +6,12 @@
 
 Strands Agents（AgentCore Runtime上）がオーケストレーターとして全ビジネスロジックを制御し、AgentCore Gateway経由でツール（Lambda）を呼び出す。
 
+**スケーラビリティ設計**:
+- Lambda個別デプロイにより各ツールが独立スケール
+- DynamoDBオンデマンドモードでキャパシティ自動調整
+- AgentCore Runtimeがエージェント実行のスケーリングを管理
+- S3 + CloudFront（将来）で画像配信を分離
+
 ## コンポーネント一覧
 
 | ID | コンポーネント | 技術 | 責務 |
